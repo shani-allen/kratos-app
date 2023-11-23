@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package helloworld.v1;
+package person.v1;
 
 import "google/api/annotations.proto";
 
-option go_package = "basic-kratos-app/api/helloworld/v1;v1";
+option go_package = "basic-kratos-app/api/person/v1;v1";
 option java_multiple_files = true;
-option java_package = "dev.kratos.api.helloworld.v1";
-option java_outer_classname = "HelloworldProtoV1";
+option java_package = "dev.kratos.api.person.v1";
+option java_outer_classname = "personProtoV1";
 
 message Person{
   string personId=1;
@@ -30,13 +30,13 @@ service PersonService{
   };
   rpc UpdatePerson(UpdatePersonRequest)returns(Person){
      option (google.api.http) = {
-      put: "/person"
+      put: "/person/{personId}"
       body:"*"
     };
   };
-  rpc DeletePerson(DeletePersonRequest)returns(Person){
+  rpc DeletePerson(DeletePersonRequest)returns(DeletePersonResponse){
     option (google.api.http)={
-      delete:"/person/personId"
+      delete:"/person/{personId}"
     };
   };
 }

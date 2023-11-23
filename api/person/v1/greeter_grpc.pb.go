@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.25.1
-// source: helloworld/v1/greeter.proto
+// source: person/v1/greeter.proto
 
 package v1
 
@@ -19,10 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PersonService_GetPersonById_FullMethodName = "/helloworld.v1.PersonService/GetPersonById"
-	PersonService_CreatePerson_FullMethodName  = "/helloworld.v1.PersonService/CreatePerson"
-	PersonService_UpdatePerson_FullMethodName  = "/helloworld.v1.PersonService/UpdatePerson"
-	PersonService_DeletePerson_FullMethodName  = "/helloworld.v1.PersonService/DeletePerson"
+	PersonService_GetPersonById_FullMethodName = "/person.v1.PersonService/GetPersonById"
+	PersonService_CreatePerson_FullMethodName  = "/person.v1.PersonService/CreatePerson"
+	PersonService_UpdatePerson_FullMethodName  = "/person.v1.PersonService/UpdatePerson"
+	PersonService_DeletePerson_FullMethodName  = "/person.v1.PersonService/DeletePerson"
 )
 
 // PersonServiceClient is the client API for PersonService service.
@@ -32,7 +32,7 @@ type PersonServiceClient interface {
 	GetPersonById(ctx context.Context, in *GetPersonIdRequest, opts ...grpc.CallOption) (*Person, error)
 	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*Person, error)
 	UpdatePerson(ctx context.Context, in *UpdatePersonRequest, opts ...grpc.CallOption) (*Person, error)
-	DeletePerson(ctx context.Context, in *DeletePersonRequest, opts ...grpc.CallOption) (*Person, error)
+	DeletePerson(ctx context.Context, in *DeletePersonRequest, opts ...grpc.CallOption) (*DeletePersonResponse, error)
 }
 
 type personServiceClient struct {
@@ -70,8 +70,8 @@ func (c *personServiceClient) UpdatePerson(ctx context.Context, in *UpdatePerson
 	return out, nil
 }
 
-func (c *personServiceClient) DeletePerson(ctx context.Context, in *DeletePersonRequest, opts ...grpc.CallOption) (*Person, error) {
-	out := new(Person)
+func (c *personServiceClient) DeletePerson(ctx context.Context, in *DeletePersonRequest, opts ...grpc.CallOption) (*DeletePersonResponse, error) {
+	out := new(DeletePersonResponse)
 	err := c.cc.Invoke(ctx, PersonService_DeletePerson_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ type PersonServiceServer interface {
 	GetPersonById(context.Context, *GetPersonIdRequest) (*Person, error)
 	CreatePerson(context.Context, *CreatePersonRequest) (*Person, error)
 	UpdatePerson(context.Context, *UpdatePersonRequest) (*Person, error)
-	DeletePerson(context.Context, *DeletePersonRequest) (*Person, error)
+	DeletePerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error)
 	mustEmbedUnimplementedPersonServiceServer()
 }
 
@@ -103,7 +103,7 @@ func (UnimplementedPersonServiceServer) CreatePerson(context.Context, *CreatePer
 func (UnimplementedPersonServiceServer) UpdatePerson(context.Context, *UpdatePersonRequest) (*Person, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePerson not implemented")
 }
-func (UnimplementedPersonServiceServer) DeletePerson(context.Context, *DeletePersonRequest) (*Person, error) {
+func (UnimplementedPersonServiceServer) DeletePerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePerson not implemented")
 }
 func (UnimplementedPersonServiceServer) mustEmbedUnimplementedPersonServiceServer() {}
@@ -195,7 +195,7 @@ func _PersonService_DeletePerson_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PersonService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "helloworld.v1.PersonService",
+	ServiceName: "person.v1.PersonService",
 	HandlerType: (*PersonServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -216,5 +216,5 @@ var PersonService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "helloworld/v1/greeter.proto",
+	Metadata: "person/v1/greeter.proto",
 }

@@ -1,7 +1,7 @@
 package server
 
 import (
-	v1 "basic-kratos-app/api/helloworld/v1"
+	v1 "basic-kratos-app/api/person/v1"
 	"basic-kratos-app/internal/conf"
 	"basic-kratos-app/internal/service"
 

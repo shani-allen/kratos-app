@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.7.1
 // - protoc             v4.25.1
-// source: helloworld/v1/greeter.proto
+// source: person/v1/greeter.proto
 
 package v1
 
@@ -19,14 +19,14 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationPersonServiceCreatePerson = "/helloworld.v1.PersonService/CreatePerson"
-const OperationPersonServiceDeletePerson = "/helloworld.v1.PersonService/DeletePerson"
-const OperationPersonServiceGetPersonById = "/helloworld.v1.PersonService/GetPersonById"
-const OperationPersonServiceUpdatePerson = "/helloworld.v1.PersonService/UpdatePerson"
+const OperationPersonServiceCreatePerson = "/person.v1.PersonService/CreatePerson"
+const OperationPersonServiceDeletePerson = "/person.v1.PersonService/DeletePerson"
+const OperationPersonServiceGetPersonById = "/person.v1.PersonService/GetPersonById"
+const OperationPersonServiceUpdatePerson = "/person.v1.PersonService/UpdatePerson"
 
 type PersonServiceHTTPServer interface {
 	CreatePerson(context.Context, *CreatePersonRequest) (*Person, error)
-	DeletePerson(context.Context, *DeletePersonRequest) (*Person, error)
+	DeletePerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error)
 	GetPersonById(context.Context, *GetPersonIdRequest) (*Person, error)
 	UpdatePerson(context.Context, *UpdatePersonRequest) (*Person, error)
 }
@@ -35,8 +35,8 @@ func RegisterPersonServiceHTTPServer(s *http.Server, srv PersonServiceHTTPServer
 	r := s.Route("/")
 	r.GET("/person/{personId}", _PersonService_GetPersonById0_HTTP_Handler(srv))
 	r.POST("/person", _PersonService_CreatePerson0_HTTP_Handler(srv))
-	r.PUT("/person", _PersonService_UpdatePerson0_HTTP_Handler(srv))
-	r.DELETE("/person/personId", _PersonService_DeletePerson0_HTTP_Handler(srv))
+	r.PUT("/person/{personId}", _PersonService_UpdatePerson0_HTTP_Handler(srv))
+	r.DELETE("/person/{personId}", _PersonService_DeletePerson0_HTTP_Handler(srv))
 }
 
 func _PersonService_GetPersonById0_HTTP_Handler(srv PersonServiceHTTPServer) func(ctx http.Context) error {
@@ -92,6 +92,9 @@ func _PersonService_UpdatePerson0_HTTP_Handler(srv PersonServiceHTTPServer) func
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
 		http.SetOperation(ctx, OperationPersonServiceUpdatePerson)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdatePerson(ctx, req.(*UpdatePersonRequest))
@@ -111,6 +114,9 @@ func _PersonService_DeletePerson0_HTTP_Handler(srv PersonServiceHTTPServer) func
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
 		http.SetOperation(ctx, OperationPersonServiceDeletePerson)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.DeletePerson(ctx, req.(*DeletePersonRequest))
@@ -119,14 +125,14 @@ func _PersonService_DeletePerson0_HTTP_Handler(srv PersonServiceHTTPServer) func
 		if err != nil {
 			return err
 		}
-		reply := out.(*Person)
+		reply := out.(*DeletePersonResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
 type PersonServiceHTTPClient interface {
 	CreatePerson(ctx context.Context, req *CreatePersonRequest, opts ...http.CallOption) (rsp *Person, err error)
-	DeletePerson(ctx context.Context, req *DeletePersonRequest, opts ...http.CallOption) (rsp *Person, err error)
+	DeletePerson(ctx context.Context, req *DeletePersonRequest, opts ...http.CallOption) (rsp *DeletePersonResponse, err error)
 	GetPersonById(ctx context.Context, req *GetPersonIdRequest, opts ...http.CallOption) (rsp *Person, err error)
 	UpdatePerson(ctx context.Context, req *UpdatePersonRequest, opts ...http.CallOption) (rsp *Person, err error)
 }
@@ -152,9 +158,9 @@ func (c *PersonServiceHTTPClientImpl) CreatePerson(ctx context.Context, in *Crea
 	return &out, err
 }
 
-func (c *PersonServiceHTTPClientImpl) DeletePerson(ctx context.Context, in *DeletePersonRequest, opts ...http.CallOption) (*Person, error) {
-	var out Person
-	pattern := "/person/personId"
+func (c *PersonServiceHTTPClientImpl) DeletePerson(ctx context.Context, in *DeletePersonRequest, opts ...http.CallOption) (*DeletePersonResponse, error) {
+	var out DeletePersonResponse
+	pattern := "/person/{personId}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPersonServiceDeletePerson))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -180,7 +186,7 @@ func (c *PersonServiceHTTPClientImpl) GetPersonById(ctx context.Context, in *Get
 
 func (c *PersonServiceHTTPClientImpl) UpdatePerson(ctx context.Context, in *UpdatePersonRequest, opts ...http.CallOption) (*Person, error) {
 	var out Person
-	pattern := "/person"
+	pattern := "/person/{personId}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationPersonServiceUpdatePerson))
 	opts = append(opts, http.PathTemplate(pattern))

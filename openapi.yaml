@@ -7,23 +7,6 @@ info:
     version: 0.0.1
 paths:
     /person:
-        put:
-            tags:
-                - PersonService
-            operationId: PersonService_UpdatePerson
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/helloworld.v1.UpdatePersonRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/helloworld.v1.Person'
         post:
             tags:
                 - PersonService
@@ -32,7 +15,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/helloworld.v1.CreatePersonRequest'
+                            $ref: '#/components/schemas/person.v1.CreatePersonRequest'
                 required: true
             responses:
                 "200":
@@ -40,24 +23,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.Person'
-    /person/personId:
-        delete:
-            tags:
-                - PersonService
-            operationId: PersonService_DeletePerson
-            parameters:
-                - name: personId
-                  in: query
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/helloworld.v1.Person'
+                                $ref: '#/components/schemas/person.v1.Person'
     /person/{personId}:
         get:
             tags:
@@ -75,17 +41,62 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.Person'
+                                $ref: '#/components/schemas/person.v1.Person'
+        put:
+            tags:
+                - PersonService
+            operationId: PersonService_UpdatePerson
+            parameters:
+                - name: personId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/person.v1.UpdatePersonRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/person.v1.Person'
+        delete:
+            tags:
+                - PersonService
+            operationId: PersonService_DeletePerson
+            parameters:
+                - name: personId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/person.v1.DeletePersonResponse'
 components:
     schemas:
-        helloworld.v1.CreatePersonRequest:
+        person.v1.CreatePersonRequest:
             type: object
             properties:
                 name:
                     type: string
                 email:
                     type: string
-        helloworld.v1.Person:
+        person.v1.DeletePersonResponse:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        person.v1.Person:
             type: object
             properties:
                 personId:
@@ -94,7 +105,7 @@ components:
                     type: string
                 email:
                     type: string
-        helloworld.v1.UpdatePersonRequest:
+        person.v1.UpdatePersonRequest:
             type: object
             properties:
                 personId:
