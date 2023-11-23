@@ -9,22 +9,58 @@ option java_multiple_files = true;
 option java_package = "dev.kratos.api.helloworld.v1";
 option java_outer_classname = "HelloworldProtoV1";
 
-// The greeting service definition.
-service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {
-    option (google.api.http) = {
-      get: "/helloworld/{name}"
+message Person{
+  string personId=1;
+  string name =2;
+  string email=3;
+}
+
+service PersonService{
+  rpc GetPersonById(GetPersonIdRequest)returns (Person){
+     option (google.api.http) = {
+      get: "/person/{personId}"
     };
-  }
+  };
+
+  rpc CreatePerson(CreatePersonRequest)returns(Person){
+    option (google.api.http)={
+      post: "/person"
+      body:"*"
+    };
+  };
+  rpc UpdatePerson(UpdatePersonRequest)returns(Person){
+     option (google.api.http) = {
+      put: "/person"
+      body:"*"
+    };
+  };
+  rpc DeletePerson(DeletePersonRequest)returns(Person){
+    option (google.api.http)={
+      delete:"/person/personId"
+    };
+  };
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+message GetPersonIdRequest{
+  string personId=1;
 }
 
-// The response message containing the greetings
-message HelloReply {
-  string message = 1;
+message CreatePersonRequest{
+  string name =1;
+  string email=2;
 }
+
+message UpdatePersonRequest{
+  string personId=1;
+  string name=2;
+  string email=3;
+}
+
+message DeletePersonRequest{
+  string personId=1;
+}
+
+message DeletePersonResponse{
+  bool success=1;
+}
+

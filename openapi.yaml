@@ -3,19 +3,68 @@
 
 openapi: 3.0.3
 info:
-    title: Greeter API
-    description: The greeting service definition.
+    title: PersonService API
     version: 0.0.1
 paths:
-    /helloworld/{name}:
+    /person:
+        put:
+            tags:
+                - PersonService
+            operationId: PersonService_UpdatePerson
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/helloworld.v1.UpdatePersonRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.Person'
+        post:
+            tags:
+                - PersonService
+            operationId: PersonService_CreatePerson
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/helloworld.v1.CreatePersonRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.Person'
+    /person/personId:
+        delete:
+            tags:
+                - PersonService
+            operationId: PersonService_DeletePerson
+            parameters:
+                - name: personId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.Person'
+    /person/{personId}:
         get:
             tags:
-                - Greeter
-                - subgroup
-            description: Sends a greeting
-            operationId: Greeter_SayHello
+                - PersonService
+            operationId: PersonService_GetPersonById
             parameters:
-                - name: name
+                - name: personId
                   in: path
                   required: true
                   schema:
@@ -26,14 +75,33 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
+                                $ref: '#/components/schemas/helloworld.v1.Person'
 components:
     schemas:
-        helloworld.v1.HelloReply:
+        helloworld.v1.CreatePersonRequest:
             type: object
             properties:
-                message:
+                name:
                     type: string
-            description: The response message containing the greetings
+                email:
+                    type: string
+        helloworld.v1.Person:
+            type: object
+            properties:
+                personId:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
+        helloworld.v1.UpdatePersonRequest:
+            type: object
+            properties:
+                personId:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
 tags:
-    - name: Greeter
+    - name: PersonService
