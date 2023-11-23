@@ -29,6 +29,11 @@ func NewGreeterRepo(data *Data, logger log.Logger) biz.PersonRepo {
 //for now i am using in memory just for veryfication 
 
 func (r *personRepo) Save(ctx context.Context, p *v1.Person) (*v1.Person, error) {
+	// tx:=r.data.db.Create(p)
+	// if tx.Error!=nil{
+	// 	return nil,tx.Error
+	// }
+
 	id:=p.PersonId
 	_, ok:=r.persons[id]
 	if ok{
@@ -49,6 +54,11 @@ func (r *personRepo) Update(ctx context.Context, p *v1.Person) (*v1.Person, erro
 }
 
 func (r *personRepo) FindByID(ctx context.Context, id string) (*v1.Person, error) {
+	// var p1 v1.Person
+	// tx:=r.data.db.Find()
+	// if tx.Error!=nil{
+	// 	return nil,tx.Error
+	// }
 	p,ok:=r.persons[id]
 	if ok{
 		return &p,nil
