@@ -42,16 +42,18 @@ func (uc *PersonUsecase) GetPersonById(ctx context.Context, in *v1.GetPersonIdRe
 
 // CreatePerson in the DB
 func(uc *PersonUsecase)CreatePerson(ctx context.Context, p *v1.Person)(*v1.Person,error){
+	uc.log.WithContext(ctx).Infof("person: %v",p)
 	return uc.repo.Save(ctx,p)
 }
 
 //
 func(uc *PersonUsecase)UpdatePerson(ctx context.Context, p *v1.Person)(*v1.Person,error){
-
+	uc.log.WithContext(ctx).Infof("person: %v",p)
 	return  uc.repo.Update(ctx,p)
 }
 
 //
 func(uc *PersonUsecase)DeletePerson(ctx context.Context, p *v1.DeletePersonRequest)(*v1.DeletePersonResponse,error){
+	uc.log.WithContext(ctx).Infof("person: %v", p)
 	return  uc.repo.DeleteById(ctx,p)
 }

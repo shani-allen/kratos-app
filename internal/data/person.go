@@ -29,17 +29,17 @@ func NewGreeterRepo(data *Data, logger log.Logger) biz.PersonRepo {
 //for now i am using in memory just for veryfication 
 
 func (r *personRepo) Save(ctx context.Context, p *v1.Person) (*v1.Person, error) {
-	// tx:=r.data.db.Create(p)
-	// if tx.Error!=nil{
-	// 	return nil,tx.Error
-	// }
-
-	id:=p.PersonId
-	_, ok:=r.persons[id]
-	if ok{
-		return nil,errors.New("already person exists in DB") 
+	tx:=r.data.db.Create(p)
+	if tx.Error!=nil{
+		return nil,tx.Error
 	}
-	r.persons[id]=*p
+
+	// id:=p.PersonId
+	// _, ok:=r.persons[id]
+	// if ok{
+	// 	return nil,errors.New("already person exists in DB") 
+	// }
+	// r.persons[id]=*p
 	return p, nil
 }
 
@@ -54,15 +54,16 @@ func (r *personRepo) Update(ctx context.Context, p *v1.Person) (*v1.Person, erro
 }
 
 func (r *personRepo) FindByID(ctx context.Context, id string) (*v1.Person, error) {
-	// var p1 v1.Person
-	// tx:=r.data.db.Find()
-	// if tx.Error!=nil{
-	// 	return nil,tx.Error
-	// }
-	p,ok:=r.persons[id]
-	if ok{
-		return &p,nil
+	var p v1.Person
+	tx:=r.data.db.First(&p,id)
+	if tx.Error!=nil{
+		r.log.WithContext(ctx).Errorf("%v", tx.Error)
+		return nil,tx.Error
 	}
+	// p,ok:=r.persons[id]
+	// if ok{
+	// 	return &p,nil
+	// }
 
 	return nil, errors.New("person does not exists")
 }
