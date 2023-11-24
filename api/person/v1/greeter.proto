@@ -39,6 +39,12 @@ service PersonService{
       delete:"/person/{personId}"
     };
   };
+
+   rpc ExistsPerson(DeletePersonRequest)returns(DeletePersonResponse){
+    option (google.api.http)={
+      get:"/person/{personId}"
+    };
+  };
 }
 
 message GetPersonIdRequest{
@@ -62,5 +68,9 @@ message DeletePersonRequest{
 
 message DeletePersonResponse{
   bool success=1;
+}
+
+message Random {
+  string name=1;
 }
 

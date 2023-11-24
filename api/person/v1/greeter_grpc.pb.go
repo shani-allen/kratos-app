@@ -23,6 +23,7 @@ const (
 	PersonService_CreatePerson_FullMethodName  = "/person.v1.PersonService/CreatePerson"
 	PersonService_UpdatePerson_FullMethodName  = "/person.v1.PersonService/UpdatePerson"
 	PersonService_DeletePerson_FullMethodName  = "/person.v1.PersonService/DeletePerson"
+	PersonService_ExistsPerson_FullMethodName  = "/person.v1.PersonService/ExistsPerson"
 )
 
 // PersonServiceClient is the client API for PersonService service.
@@ -33,6 +34,7 @@ type PersonServiceClient interface {
 	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*Person, error)
 	UpdatePerson(ctx context.Context, in *UpdatePersonRequest, opts ...grpc.CallOption) (*Person, error)
 	DeletePerson(ctx context.Context, in *DeletePersonRequest, opts ...grpc.CallOption) (*DeletePersonResponse, error)
+	ExistsPerson(ctx context.Context, in *DeletePersonRequest, opts ...grpc.CallOption) (*DeletePersonResponse, error)
 }
 
 type personServiceClient struct {
@@ -79,6 +81,15 @@ func (c *personServiceClient) DeletePerson(ctx context.Context, in *DeletePerson
 	return out, nil
 }
 
+func (c *personServiceClient) ExistsPerson(ctx context.Context, in *DeletePersonRequest, opts ...grpc.CallOption) (*DeletePersonResponse, error) {
+	out := new(DeletePersonResponse)
+	err := c.cc.Invoke(ctx, PersonService_ExistsPerson_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PersonServiceServer is the server API for PersonService service.
 // All implementations must embed UnimplementedPersonServiceServer
 // for forward compatibility
@@ -87,6 +98,7 @@ type PersonServiceServer interface {
 	CreatePerson(context.Context, *CreatePersonRequest) (*Person, error)
 	UpdatePerson(context.Context, *UpdatePersonRequest) (*Person, error)
 	DeletePerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error)
+	ExistsPerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error)
 	mustEmbedUnimplementedPersonServiceServer()
 }
 
@@ -105,6 +117,9 @@ func (UnimplementedPersonServiceServer) UpdatePerson(context.Context, *UpdatePer
 }
 func (UnimplementedPersonServiceServer) DeletePerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePerson not implemented")
+}
+func (UnimplementedPersonServiceServer) ExistsPerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExistsPerson not implemented")
 }
 func (UnimplementedPersonServiceServer) mustEmbedUnimplementedPersonServiceServer() {}
 
@@ -191,6 +206,24 @@ func _PersonService_DeletePerson_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PersonService_ExistsPerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePersonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PersonServiceServer).ExistsPerson(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PersonService_ExistsPerson_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PersonServiceServer).ExistsPerson(ctx, req.(*DeletePersonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PersonService_ServiceDesc is the grpc.ServiceDesc for PersonService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +246,10 @@ var PersonService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePerson",
 			Handler:    _PersonService_DeletePerson_Handler,
+		},
+		{
+			MethodName: "ExistsPerson",
+			Handler:    _PersonService_ExistsPerson_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -28,7 +28,7 @@ paths:
         get:
             tags:
                 - PersonService
-            operationId: PersonService_GetPersonById
+            operationId: PersonService_ExistsPerson
             parameters:
                 - name: personId
                   in: path
@@ -41,7 +41,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/person.v1.Person'
+                                $ref: '#/components/schemas/person.v1.DeletePersonResponse'
         put:
             tags:
                 - PersonService

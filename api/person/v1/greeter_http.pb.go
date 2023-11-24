@@ -21,12 +21,14 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationPersonServiceCreatePerson = "/person.v1.PersonService/CreatePerson"
 const OperationPersonServiceDeletePerson = "/person.v1.PersonService/DeletePerson"
+const OperationPersonServiceExistsPerson = "/person.v1.PersonService/ExistsPerson"
 const OperationPersonServiceGetPersonById = "/person.v1.PersonService/GetPersonById"
 const OperationPersonServiceUpdatePerson = "/person.v1.PersonService/UpdatePerson"
 
 type PersonServiceHTTPServer interface {
 	CreatePerson(context.Context, *CreatePersonRequest) (*Person, error)
 	DeletePerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error)
+	ExistsPerson(context.Context, *DeletePersonRequest) (*DeletePersonResponse, error)
 	GetPersonById(context.Context, *GetPersonIdRequest) (*Person, error)
 	UpdatePerson(context.Context, *UpdatePersonRequest) (*Person, error)
 }
@@ -37,6 +39,7 @@ func RegisterPersonServiceHTTPServer(s *http.Server, srv PersonServiceHTTPServer
 	r.POST("/person", _PersonService_CreatePerson0_HTTP_Handler(srv))
 	r.PUT("/person/{personId}", _PersonService_UpdatePerson0_HTTP_Handler(srv))
 	r.DELETE("/person/{personId}", _PersonService_DeletePerson0_HTTP_Handler(srv))
+	r.GET("/person/{personId}", _PersonService_ExistsPerson0_HTTP_Handler(srv))
 }
 
 func _PersonService_GetPersonById0_HTTP_Handler(srv PersonServiceHTTPServer) func(ctx http.Context) error {
@@ -130,9 +133,32 @@ func _PersonService_DeletePerson0_HTTP_Handler(srv PersonServiceHTTPServer) func
 	}
 }
 
+func _PersonService_ExistsPerson0_HTTP_Handler(srv PersonServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeletePersonRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPersonServiceExistsPerson)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ExistsPerson(ctx, req.(*DeletePersonRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*DeletePersonResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PersonServiceHTTPClient interface {
 	CreatePerson(ctx context.Context, req *CreatePersonRequest, opts ...http.CallOption) (rsp *Person, err error)
 	DeletePerson(ctx context.Context, req *DeletePersonRequest, opts ...http.CallOption) (rsp *DeletePersonResponse, err error)
+	ExistsPerson(ctx context.Context, req *DeletePersonRequest, opts ...http.CallOption) (rsp *DeletePersonResponse, err error)
 	GetPersonById(ctx context.Context, req *GetPersonIdRequest, opts ...http.CallOption) (rsp *Person, err error)
 	UpdatePerson(ctx context.Context, req *UpdatePersonRequest, opts ...http.CallOption) (rsp *Person, err error)
 }
@@ -165,6 +191,19 @@ func (c *PersonServiceHTTPClientImpl) DeletePerson(ctx context.Context, in *Dele
 	opts = append(opts, http.Operation(OperationPersonServiceDeletePerson))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *PersonServiceHTTPClientImpl) ExistsPerson(ctx context.Context, in *DeletePersonRequest, opts ...http.CallOption) (*DeletePersonResponse, error) {
+	var out DeletePersonResponse
+	pattern := "/person/{personId}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPersonServiceExistsPerson))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
